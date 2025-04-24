@@ -6,16 +6,19 @@ Este proyecto demuestra cómo trabajar con bases de datos MongoDB utilizando **d
 
 ```
 MongoDotNotationProject/
-├── main.py
-└── modules/
-    ├── analysis.py
-    ├── connection.py
-    ├── indexing.py
-    ├── load_data.py
-    └── operations.py
+└── src/
+    ├── main.py
+    └── modules/
+        ├── analysis.py
+        ├── connection.py
+        ├── indexing.py
+        ├── load_data.py
+        └── operations.py
+└── data/
+    ├── MOCK_DATA.json
 ```
 
-## 🛠️ Requisitos
+## Requisitos
 
 - Python 3.7+
 - MongoDB (local o MongoDB Atlas)
@@ -28,11 +31,10 @@ Instalación rápida de dependencias:
 pip install pymongo
 ```
 
-## 🚀 Ejecución
+## Ejecución
 
 1. Asegúrate de tener MongoDB corriendo localmente o cambia la URI en `modules/connection.py` si usas Atlas.
-2. Coloca el archivo `MOCK_DATA.json` en la raíz del proyecto.
-3. Ejecuta el script principal:
+2. Ejecuta el script principal:
 
 ```bash
 python main.py
@@ -56,6 +58,8 @@ python main.py
 - Manipulación de documentos con arrays y subdocumentos.
 - Modularización en Python para proyectos con MongoDB.
 
-## 📄 Autor
+## 📄 Autores
+- Nerea Jiménez Adorna
+- Carlos García Ortiz
 
-Proyecto desarrollado como parte de una práctica de bases de datos NoSQL (MongoDB).
+Proyecto desarrollado como parte de la asignatura complementos de bases de datos, en el tema Dot Notation en MongoDB.
