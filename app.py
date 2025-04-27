@@ -97,20 +97,20 @@ layout = '''<!doctype html>
 def render(content):
     nav_items = [
         ("Inicio", "/"),
-        ("Top 5 Países", "/top5"),
-        ("Análisis Categoría", "/analisis_categoria"),
-        ("Proveedores Ordenados", "/proveedores"),
-        ("Contar Intervalo", "/contar_intervalo"),
-        ("Listar Categorías", "/lista_categorias"),
-        ("Actualizar Email", "/actualizar_email"),
-        ("Incrementar Precio", "/incrementar_precio"),
-        ("Modificar Proveedor", "/modificar_proveedor"),
-        ("Añadir Etiqueta", "/añadir_etiqueta"),
-        ("Buscar Anidado", "/buscar_anidado"),
-        ("Imprimir Docs", "/imprimir_doc"),
-        ("Usuario por Email", "/usuario_email"),
+        ("Top 5 países", "/top5"),
+        ("Compras por categoría", "/analisis_categoria"),
+        ("Proveedores ordenados", "/proveedores"),
+        ("Compras en intervalo", "/compras_intervalo"),
+        ("Listar categorías", "/lista_categorias"),
+        ("Actualizar email", "/actualizar_email"),
+        ("Incrementar precio por tarjeta", "/incrementar_precio"),
+        ("Modificar proveedor", "/modificar_proveedor"),
+        ("Añadir etiqueta", "/añadir_etiqueta"),
+        ("Buscar por campo anidado", "/buscar_anidado"),
+        ("Imprimir docs", "/imprimir_doc"),
+        ("Usuario por email", "/usuario_email"),
         ("Compras Email+Pais", "/compras_email_pais"),
-        ("Texto Shoppings", "/texto_shoppings"),
+        ("Texto shoppings", "/texto_shoppings"),
         ("Usuarios País+Categoría", "/usuarios_pais_categoria")
     ]
     return render_template_string(layout, content=content, nav_items=nav_items)
@@ -123,22 +123,22 @@ def home():
 @app.route('/top5')
 def top5_paises():
     docs = mejores_5_paises(coleccion)
-    return render('<h2>Top 5 Países</h2>' + list_to_table(docs))
+    return render('<h2>Top 5 países con más ventas</h2>' + list_to_table(docs))
 
 @app.route('/analisis_categoria')
 def analisis_categoria():
     docs = analisis_compras_por_categoria(coleccion)
-    return render('<h2>Análisis Categoría</h2>' + list_to_table(docs))
+    return render('<h2>Análisis de categorías</h2>' + list_to_table(docs))
 
 @app.route('/proveedores')
 def proveedores():
     docs = crear_proveedores_ordenados(coleccion)
-    return render('<h2>Proveedores Ordenados</h2>' + list_to_table(docs))
+    return render('<h2>Proveedores ordenados por ventas</h2>' + list_to_table(docs))
 
-@app.route('/contar_intervalo', methods=['GET','POST'])
+@app.route('/compras_intervalo', methods=['GET','POST'])
 def contar_intervalo():
     form = (
-      '<h2>Contar Compras en Intervalo</h2>'
+      '<h2>Contar compras en un intervalo</h2>'
       '<form method="post">'
       '<input type="date" name="inicio" class="form-control">'
       '<input type="date" name="fin" class="form-control mt-2">'
@@ -161,7 +161,7 @@ def lista_categorias():
 @app.route('/actualizar_email', methods=['GET','POST'])
 def actualizar_email():
     form = (
-      '<h2>Actualizar Email</h2>'
+      '<h2>Actualizar email</h2>'
       '<form method="post">'
       '<input name="nombre" placeholder="Kerrie" class="form-control">'
       '<input name="email" placeholder="kerrie@ejemplo.com" class="form-control mt-2">'
@@ -180,19 +180,24 @@ def actualizar_email():
 @app.route('/incrementar_precio', methods=['GET','POST'])
 def incrementar_precio_route():
     form = (
-      '<h2>Incrementar Precio de Shopping</h2>'
+      '<h2>Incrementar precio por tipo de pago de la primera tarjeta</h2>'
       '<form method="post">'
       '<input type="number" step="0.01" name="aumento" '
       'placeholder="Cantidad a incrementar" class="form-control">'
+      '<input name="tarjeta" name="aumento" '
+      'placeholder="mastercard" class="form-control">'
       '<button class="btn btn-custom-1 mt-2">Incrementar</button>'
       '</form>'
     )
     if request.method == 'POST':
         try:
             aumento = float(request.form['aumento'])
+            tarjeta = request.form['tarjeta']
+            if tarjeta not in ["visa", "mastercard", "americanexpress"]:
+                return render(form + '<div class="alert alert-danger mt-2">Tarjeta no válida.</div>')
         except ValueError:
             return render(form + '<div class="alert alert-danger mt-2">Introduce un número válido.</div>')
-        mod = incrementar_precio_shopping(coleccion, aumento)
+        mod = incrementar_precio_shopping(coleccion, aumento, tarjeta)
         return render(form + f"<p class=\"mt-3\">Documentos modificados: {mod}</p>")
     return render(form)
 
@@ -200,7 +205,7 @@ def incrementar_precio_route():
 @app.route('/modificar_proveedor', methods=['GET','POST'])
 def modificar_proveedor_route():
     form = (
-      '<h2>Modificar Proveedor</h2>'
+      '<h2>Modificar proveedor</h2>'
       '<form method="post">'
       '<input name="usuario" placeholder="Delbert" class="form-control">'
       '<input name="indice" placeholder="0" class="form-control mt-2">'
@@ -221,7 +226,7 @@ def modificar_proveedor_route():
 @app.route('/añadir_etiqueta', methods=['GET','POST'])
 def añadir_etiqueta_route():
     form = (
-      '<h2>Añadir Etiqueta</h2>'
+      '<h2>Añadir etiqueta</h2>'
       '<form method="post">'
       '<input name="etiqueta" placeholder="destacado" class="form-control">'
       '<button class="btn btn-custom-1 mt-2">Añadir</button>'
@@ -238,7 +243,7 @@ def añadir_etiqueta_route():
 @app.route('/buscar_anidado', methods=['GET','POST'])
 def buscar_anidado_route():
     form = (
-      '<h2>Buscar Anidado</h2>'
+      '<h2>Buscar por campo anidado</h2>'
       '<form method="post">'
       '<input name="ruta" placeholder="shoppings.0.category" class="form-control">'
       '<input name="valor" placeholder="Clothing" class="form-control mt-2">'
@@ -257,7 +262,7 @@ def buscar_anidado_route():
 @app.route('/imprimir_doc', methods=['GET','POST'])
 def imprimir_doc_route():
     form = (
-      '<h2>Imprimir Documentos</h2>'
+      '<h2>Imprimir documentos (con filtro)</h2>'
       '<form method="post">'
       '<input name="filtro" placeholder="{}" class="form-control">'
       '<input name="campos" placeholder="first_name,contact.email" class="form-control mt-2">'
@@ -274,7 +279,7 @@ def imprimir_doc_route():
 @app.route('/usuario_email', methods=['GET','POST'])
 def usuario_email_route():
     form = (
-      '<h2>Usuario por Email</h2>'
+      '<h2>Usuario por email</h2>'
       '<form method="post">'
       '<input name="email" placeholder="hsauntb@who.int" class="form-control">'
       '<button class="btn btn-custom-1 mt-2">Buscar</button>'
@@ -288,7 +293,7 @@ def usuario_email_route():
 @app.route('/compras_email_pais', methods=['GET','POST'])
 def compras_email_pais_route():
     form = (
-      '<h2>Compras por Email y País</h2>'
+      '<h2>Compras por email y país</h2>'
       '<form method="post">'
       '<input name="email" placeholder="sbenallackf@wsj.com" class="form-control">'
       '<input name="pais" placeholder="Spain" class="form-control mt-2">'
@@ -307,7 +312,7 @@ def compras_email_pais_route():
 @app.route('/texto_shoppings', methods=['GET','POST'])
 def texto_shoppings_route():
     form = (
-      '<h2>Búsqueda de Texto</h2>'
+      '<h2>Búsqueda de texto</h2>'
       '<form method="post">'
       '<input name="termino" placeholder="Electronics" class="form-control">'
       '<button class="btn btn-custom-1 mt-2">Buscar</button>'
@@ -321,7 +326,7 @@ def texto_shoppings_route():
 @app.route('/usuarios_pais_categoria', methods=['GET','POST'])
 def usuarios_pais_categoria_route():
     form = (
-      '<h2>Usuarios por País y Categoría</h2>'
+      '<h2>Usuarios por país y categoría</h2>'
       '<form method="post">'
       '<input name="pais" placeholder="United States" class="form-control">'
       '<input name="categoria" placeholder="Clothing" class="form-control mt-2">'

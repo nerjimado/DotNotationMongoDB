@@ -7,9 +7,9 @@ def actualizar_email_contacto(coleccion, nombre, nuevo_email):
     )
     return result.modified_count
 
-def incrementar_precio_shopping(coleccion, aumento=10):
+def incrementar_precio_shopping(coleccion, aumento=10, tarjeta ="mastercard"):
     result = coleccion.update_many(
-        {"creditcards": "mastercard"},
+        {"creditcards.0": tarjeta},
         {"$inc": {"shoppings.0.price": aumento}}
     )
     return result.modified_count
